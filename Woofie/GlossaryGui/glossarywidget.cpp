@@ -9,7 +9,7 @@
 AddTermDialog::AddTermDialog(QWidget* parent)
   : QDialog(parent)
 {
-  setWindowTitle("Добавить новый термин");
+  setWindowTitle("Р”РѕР±Р°РІРёС‚СЊ РЅРѕРІС‹Р№ С‚РµСЂРјРёРЅ");
   setModal(true);
 
   m_translatedEdit = new QLineEdit(this);
@@ -17,13 +17,13 @@ AddTermDialog::AddTermDialog(QWidget* parent)
   m_descriptionEdit = new QTextEdit(this);
   m_descriptionEdit->setMaximumHeight(100);
 
-  m_okButton = new QPushButton("Добавить", this);
-  m_cancelButton = new QPushButton("Отмена", this);
+  m_okButton = new QPushButton("Р”РѕР±Р°РІРёС‚СЊ", this);
+  m_cancelButton = new QPushButton("РћС‚РјРµРЅР°", this);
 
   QFormLayout* formLayout = new QFormLayout;
-  formLayout->addRow("Переведённый термин:", m_translatedEdit);
-  formLayout->addRow("Изначальный термин:", m_originalEdit);
-  formLayout->addRow("Описание:", m_descriptionEdit);
+  formLayout->addRow("РџРµСЂРµРІРµРґС‘РЅРЅС‹Р№ С‚РµСЂРјРёРЅ:", m_translatedEdit);
+  formLayout->addRow("РР·РЅР°С‡Р°Р»СЊРЅС‹Р№ С‚РµСЂРјРёРЅ:", m_originalEdit);
+  formLayout->addRow("РћРїРёСЃР°РЅРёРµ:", m_descriptionEdit);
 
   QHBoxLayout* buttonLayout = new QHBoxLayout;
   buttonLayout->addStretch();
@@ -92,11 +92,11 @@ void GlossaryWidget::setupUI()
   m_tableView = new QTableView(this);
 
   m_searchEdit = new QLineEdit(this);
-  m_searchEdit->setPlaceholderText("Поиск терминов...");
+  m_searchEdit->setPlaceholderText("РџРѕРёСЃРє С‚РµСЂРјРёРЅРѕРІ...");
 
-  m_addButton = new QPushButton("Добавить термин", this);
-  m_removeButton = new QPushButton("Удалить выбранный", this);
-  m_clearButton = new QPushButton("Очистить поиск", this);
+  m_addButton = new QPushButton("Р”РѕР±Р°РІРёС‚СЊ С‚РµСЂРјРёРЅ", this);
+  m_removeButton = new QPushButton("РЈРґР°Р»РёС‚СЊ РІС‹Р±СЂР°РЅРЅС‹Р№", this);
+  m_clearButton = new QPushButton("РћС‡РёСЃС‚РёС‚СЊ РїРѕРёСЃРє", this);
 
   QHBoxLayout* searchLayout = new QHBoxLayout;
   searchLayout->addWidget(m_searchEdit);
@@ -122,11 +122,11 @@ void GlossaryWidget::setupConnections()
   connect(m_tableView, &QTableView::customContextMenuRequested, this, &GlossaryWidget::showContextMenu);
 
   connect(m_model, &GlossaryModel::dataUpdatedByUser, this, [this]() {
-    qDebug() << "Данные глоссария обновлены пользователем";
+    qDebug() << "Р”Р°РЅРЅС‹Рµ РіР»РѕСЃСЃР°СЂРёСЏ РѕР±РЅРѕРІР»РµРЅС‹ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј";
     });
 
   connect(m_model, &GlossaryModel::termAddedByUser, this, [this](const GlossaryTerm& term) {
-    qDebug() << "Добавлен новый термин пользователем:" << term.translated;
+    qDebug() << "Р”РѕР±Р°РІР»РµРЅ РЅРѕРІС‹Р№ С‚РµСЂРјРёРЅ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј:" << term.translated;
   emit termAdded(term);
     });
 }
@@ -157,12 +157,12 @@ void GlossaryWidget::removeSelectedTerm()
 {
   QModelIndexList selected = m_tableView->selectionModel()->selectedRows();
   if (selected.isEmpty()) {
-    QMessageBox::warning(this, "Предупреждение", "Выберите термин для удаления");
+    QMessageBox::warning(this, "РџСЂРµРґСѓРїСЂРµР¶РґРµРЅРёРµ", "Р’С‹Р±РµСЂРёС‚Рµ С‚РµСЂРјРёРЅ РґР»СЏ СѓРґР°Р»РµРЅРёСЏ");
     return;
   }
 
-  if (QMessageBox::question(this, "Подтверждение",
-    "Удалить выбранный термин?") == QMessageBox::Yes) {
+  if (QMessageBox::question(this, "РџРѕРґС‚РІРµСЂР¶РґРµРЅРёРµ",
+    "РЈРґР°Р»РёС‚СЊ РІС‹Р±СЂР°РЅРЅС‹Р№ С‚РµСЂРјРёРЅ?") == QMessageBox::Yes) {
     QList<int> rows;
     for (const QModelIndex& index : selected) {
       rows.append(m_proxyModel->mapToSource(index).row());
@@ -189,18 +189,18 @@ void GlossaryWidget::showContextMenu(const QPoint& pos)
     return;
 
   QMenu menu(this);
-  menu.addAction("Редактировать", [this, index]() {
-    QMessageBox::information(this, "Информация",
-    "Редактирование можно добавить при необходимости");
+  menu.addAction("Р РµРґР°РєС‚РёСЂРѕРІР°С‚СЊ", [this, index]() {
+    QMessageBox::information(this, "РРЅС„РѕСЂРјР°С†РёСЏ",
+    "Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ РјРѕР¶РЅРѕ РґРѕР±Р°РІРёС‚СЊ РїСЂРё РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё");
     });
 
-  menu.addAction("Копировать термин", [this, index]() {
+  menu.addAction("РљРѕРїРёСЂРѕРІР°С‚СЊ С‚РµСЂРјРёРЅ", [this, index]() {
     QString text = m_proxyModel->data(index).toString();
   QApplication::clipboard()->setText(text);
     });
 
   menu.addSeparator();
-  menu.addAction("Удалить", this, &GlossaryWidget::removeSelectedTerm);
+  menu.addAction("РЈРґР°Р»РёС‚СЊ", this, &GlossaryWidget::removeSelectedTerm);
 
   menu.exec(m_tableView->viewport()->mapToGlobal(pos));
 }

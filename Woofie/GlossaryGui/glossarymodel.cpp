@@ -48,9 +48,9 @@ QVariant GlossaryModel::headerData(int section, Qt::Orientation orientation, int
 
   if (orientation == Qt::Horizontal) {
     switch (section) {
-    case 0: return "Переведённый термин";
-    case 1: return "Изначальный термин";
-    case 2: return "Описание";
+    case 0: return "РџРµСЂРµРІРµРґС‘РЅРЅС‹Р№ С‚РµСЂРјРёРЅ";
+    case 1: return "РР·РЅР°С‡Р°Р»СЊРЅС‹Р№ С‚РµСЂРјРёРЅ";
+    case 2: return "РћРїРёСЃР°РЅРёРµ";
     default: return QVariant();
     }
   }

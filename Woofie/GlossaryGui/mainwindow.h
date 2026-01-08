@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-// Предварительное объявление классов
+// РџСЂРµРґРІР°СЂРёС‚РµР»СЊРЅРѕРµ РѕР±СЉСЏРІР»РµРЅРёРµ РєР»Р°СЃСЃРѕРІ
 class GlossaryWidget;
 class GlossaryModel;
 struct GlossaryTerm;

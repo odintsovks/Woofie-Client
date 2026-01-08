@@ -12,72 +12,72 @@ MainWindow::MainWindow(QWidget* parent)
   , m_model(new GlossaryModel(this))
   , m_glossaryWidget(new GlossaryWidget(this))
 {
-  setWindowTitle("Глоссарий терминов");
+  setWindowTitle("Р“Р»РѕСЃСЃР°СЂРёР№ С‚РµСЂРјРёРЅРѕРІ");
   setMinimumSize(800, 600);
 
-  // Загрузка тестовых данных
-  m_model->addTerm("Компилятор", "Compiler", "Программа, переводящая код с языка программирования в машинный код");
-  m_model->addTerm("Переменная", "Variable", "Именованная область памяти для хранения данных");
-  m_model->addTerm("Функция", "Function", "Блок кода, выполняющий определенную задачу");
-  m_model->addTerm("Класс", "Class", "Шаблон для создания объектов в ООП");
+  // Р—Р°РіСЂСѓР·РєР° С‚РµСЃС‚РѕРІС‹С… РґР°РЅРЅС‹С…
+  m_model->addTerm("РљРѕРјРїРёР»СЏС‚РѕСЂ", "Compiler", "РџСЂРѕРіСЂР°РјРјР°, РїРµСЂРµРІРѕРґСЏС‰Р°СЏ РєРѕРґ СЃ СЏР·С‹РєР° РїСЂРѕРіСЂР°РјРјРёСЂРѕРІР°РЅРёСЏ РІ РјР°С€РёРЅРЅС‹Р№ РєРѕРґ");
+  m_model->addTerm("РџРµСЂРµРјРµРЅРЅР°СЏ", "Variable", "РРјРµРЅРѕРІР°РЅРЅР°СЏ РѕР±Р»Р°СЃС‚СЊ РїР°РјСЏС‚Рё РґР»СЏ С…СЂР°РЅРµРЅРёСЏ РґР°РЅРЅС‹С…");
+  m_model->addTerm("Р¤СѓРЅРєС†РёСЏ", "Function", "Р‘Р»РѕРє РєРѕРґР°, РІС‹РїРѕР»РЅСЏСЋС‰РёР№ РѕРїСЂРµРґРµР»РµРЅРЅСѓСЋ Р·Р°РґР°С‡Сѓ");
+  m_model->addTerm("РљР»Р°СЃСЃ", "Class", "РЁР°Р±Р»РѕРЅ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РѕР±СЉРµРєС‚РѕРІ РІ РћРћРџ");
 
   m_glossaryWidget->setModel(m_model);
   setCentralWidget(m_glossaryWidget);
 
   setupMenu();
 
-  // Подключаем сигналы
+  // РџРѕРґРєР»СЋС‡Р°РµРј СЃРёРіРЅР°Р»С‹
   connect(m_glossaryWidget, &GlossaryWidget::termAdded, this, &MainWindow::onTermAdded);
 }
 
 void MainWindow::setupMenu()
 {
-  QMenu* fileMenu = menuBar()->addMenu("Файл");
-  fileMenu->addAction("Загрузить", this, &MainWindow::loadGlossary);
-  fileMenu->addAction("Сохранить", this, &MainWindow::saveGlossary);
+  QMenu* fileMenu = menuBar()->addMenu("Р¤Р°Р№Р»");
+  fileMenu->addAction("Р—Р°РіСЂСѓР·РёС‚СЊ", this, &MainWindow::loadGlossary);
+  fileMenu->addAction("РЎРѕС…СЂР°РЅРёС‚СЊ", this, &MainWindow::saveGlossary);
   fileMenu->addSeparator();
-  fileMenu->addAction("Выход", qApp, &QApplication::quit);
+  fileMenu->addAction("Р’С‹С…РѕРґ", qApp, &QApplication::quit);
 
-  QMenu* viewMenu = menuBar()->addMenu("Вид");
-  viewMenu->addAction("Статистика", this, &MainWindow::showStats);
+  QMenu* viewMenu = menuBar()->addMenu("Р’РёРґ");
+  viewMenu->addAction("РЎС‚Р°С‚РёСЃС‚РёРєР°", this, &MainWindow::showStats);
 
-  QMenu* helpMenu = menuBar()->addMenu("Помощь");
-  helpMenu->addAction("О программе", []() {
-    QMessageBox::about(nullptr, "О программе",
-    "Глоссарий терминов\n\n"
-    "Программа для управления словарём терминов с переводом и описанием.");
+  QMenu* helpMenu = menuBar()->addMenu("РџРѕРјРѕС‰СЊ");
+  helpMenu->addAction("Рћ РїСЂРѕРіСЂР°РјРјРµ", []() {
+    QMessageBox::about(nullptr, "Рћ РїСЂРѕРіСЂР°РјРјРµ",
+    "Р“Р»РѕСЃСЃР°СЂРёР№ С‚РµСЂРјРёРЅРѕРІ\n\n"
+    "РџСЂРѕРіСЂР°РјРјР° РґР»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ СЃР»РѕРІР°СЂС‘Рј С‚РµСЂРјРёРЅРѕРІ СЃ РїРµСЂРµРІРѕРґРѕРј Рё РѕРїРёСЃР°РЅРёРµРј.");
     });
 }
 
 void MainWindow::onTermAdded(const GlossaryTerm& term)
 {
-  statusBar()->showMessage(QString("Добавлен новый термин: %1").arg(term.translated), 3000);
+  statusBar()->showMessage(QString("Р”РѕР±Р°РІР»РµРЅ РЅРѕРІС‹Р№ С‚РµСЂРјРёРЅ: %1").arg(term.translated), 3000);
 }
 
 void MainWindow::saveGlossary()
 {
-  QString filename = QFileDialog::getSaveFileName(this, "Сохранить глоссарий",
-    "", "Текстовые файлы (*.txt)");
+  QString filename = QFileDialog::getSaveFileName(this, "РЎРѕС…СЂР°РЅРёС‚СЊ РіР»РѕСЃСЃР°СЂРёР№",
+    "", "РўРµРєСЃС‚РѕРІС‹Рµ С„Р°Р№Р»С‹ (*.txt)");
   if (!filename.isEmpty()) {
     if (m_model->saveToFile(filename)) {
-      statusBar()->showMessage("Глоссарий сохранен", 2000);
+      statusBar()->showMessage("Р“Р»РѕСЃСЃР°СЂРёР№ СЃРѕС…СЂР°РЅРµРЅ", 2000);
     }
     else {
-      QMessageBox::warning(this, "Ошибка", "Не удалось сохранить файл");
+      QMessageBox::warning(this, "РћС€РёР±РєР°", "РќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕС…СЂР°РЅРёС‚СЊ С„Р°Р№Р»");
     }
   }
 }
 
 void MainWindow::loadGlossary()
 {
-  QString filename = QFileDialog::getOpenFileName(this, "Загрузить глоссарий",
-    "", "Текстовые файлы (*.txt)");
+  QString filename = QFileDialog::getOpenFileName(this, "Р—Р°РіСЂСѓР·РёС‚СЊ РіР»РѕСЃСЃР°СЂРёР№",
+    "", "РўРµРєСЃС‚РѕРІС‹Рµ С„Р°Р№Р»С‹ (*.txt)");
   if (!filename.isEmpty()) {
     if (m_model->loadFromFile(filename)) {
-      statusBar()->showMessage("Глоссарий загружен", 2000);
+      statusBar()->showMessage("Р“Р»РѕСЃСЃР°СЂРёР№ Р·Р°РіСЂСѓР¶РµРЅ", 2000);
     }
     else {
-      QMessageBox::warning(this, "Ошибка", "Не удалось загрузить файл");
+      QMessageBox::warning(this, "РћС€РёР±РєР°", "РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ С„Р°Р№Р»");
     }
   }
 }
@@ -85,6 +85,6 @@ void MainWindow::loadGlossary()
 void MainWindow::showStats()
 {
   int count = m_model->rowCount();
-  QMessageBox::information(this, "Статистика",
-    QString("Всего терминов: %1").arg(count));
+  QMessageBox::information(this, "РЎС‚Р°С‚РёСЃС‚РёРєР°",
+    QString("Р’СЃРµРіРѕ С‚РµСЂРјРёРЅРѕРІ: %1").arg(count));
 }
