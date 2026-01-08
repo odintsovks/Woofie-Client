@@ -14,6 +14,9 @@ class TranslationUnitWidget : public QWidget
 public:
     explicit TranslationUnitWidget(QWidget *parent = nullptr);
     ~TranslationUnitWidget();
+signals:
+    void positionChanged(QPoint newPosition);
+    void attemptConnection(TranslationUnitWidget* self);
 
 protected:
     void mousePressEvent(QMouseEvent *event);
