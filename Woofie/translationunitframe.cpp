@@ -107,6 +107,11 @@ TranslationUnitFrame::~TranslationUnitFrame()
     delete ui;
 }
 
+TranslationUnitWidget* TranslationUnitFrame::getTranslationUnit(int index)
+{
+    return units[index];
+}
+
 void TranslationUnitFrame::attemptConnection(TranslationUnitWidget* unit)
 {
     if (!connectingFromPtr)

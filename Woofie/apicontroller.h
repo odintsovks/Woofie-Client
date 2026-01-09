@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QNetworkAccessManager>
+#include <QTimer>
 #include "glossarymodel.h"
 #include "translationunitframe.h"
 
@@ -18,11 +19,14 @@ private slots:
     void unitUpdatedByUser(int index, const TranslationUnitWidget* unit);
     void unitAddedByUser(const TranslationUnitWidget* unit);
     void unitRemovedByUser(int index);
+    void fetchUpdates();
 private:
     QNetworkAccessManager manager;
     QList<qint64> glossaryIndices;
+    TranslationUnitFrame *unitFrame;
     QList<qint64> unitIndices;
-    QList<qint64> connectionIndices;
+    qint64 unitTimestamp;
+    QTimer updateTimer;
 };
 
 #endif // APICONTROLLER_H

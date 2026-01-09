@@ -25,7 +25,10 @@ ApiController::ApiController(GlossaryModel *glossaryModel, TranslationUnitFrame 
     : QObject{parent}
     , manager()
     , glossaryIndices()
+    , unitFrame(unitFrame)
     , unitIndices()
+    , unitTimestamp(0)
+    , updateTimer()
 {
     QUrl url("http://127.0.0.1:8080/glossary");
     QNetworkRequest request;
@@ -49,6 +52,7 @@ ApiController::ApiController(GlossaryModel *glossaryModel, TranslationUnitFrame 
     request.setUrl(url);
     result = awaitReply(manager.get(request));
     jsonResult = QJsonDocument::fromJson(result);
+    unitTimestamp = jsonResult.object().value("timestamp").toInteger();
     entries = jsonResult.object().value("translations").toArray();
 
     for (QJsonValue val : entries)
@@ -61,6 +65,10 @@ ApiController::ApiController(GlossaryModel *glossaryModel, TranslationUnitFrame 
     connect(unitFrame, &TranslationUnitFrame::addedTranslationUnitByUser, this, &ApiController::unitAddedByUser);
     connect(unitFrame, &TranslationUnitFrame::removedTranslationUnitByUser, this, &ApiController::unitRemovedByUser);
     connect(unitFrame, &TranslationUnitFrame::editedTranslationUnitByUser, this, &ApiController::unitUpdatedByUser);
+
+    updateTimer.setInterval(1000);
+    updateTimer.start();
+    connect(&updateTimer, &QTimer::timeout, this, &ApiController::fetchUpdates);
 }
 
 void ApiController::glossaryDataUpdatedByUser(const QModelIndex& lhs, const QModelIndex& rhs)
@@ -139,4 +147,32 @@ void ApiController::unitRemovedByUser(int index)
     QNetworkRequest request;
     request.setUrl(url);
     manager.deleteResource(request);
+}
+void ApiController::fetchUpdates()
+{
+    QUrl url("http://127.0.0.1:8080/api/translations/fetch");
+    QNetworkRequest request;
+    request.setUrl(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    QJsonObject obj;
+    obj.insert("timestamp", unitTimestamp);
+    QByteArray result = awaitReply(manager.post(request, QJsonDocument(obj).toJson()));
+    QJsonDocument jsonResult = QJsonDocument::fromJson(result);
+    QJsonArray entries = jsonResult.object().value("translations").toArray();
+    if (!entries.empty())
+        unitTimestamp = jsonResult.object().value("timestamp").toInteger();
+    for (QJsonValue val : entries) {
+        QJsonObject obj = val.toObject();
+        qint64 id = obj.value("id").toInteger();
+        qsizetype trueIndex = unitIndices.indexOf(id);
+        if (trueIndex == -1) {
+            unitFrame->addTranslationUnitFromStrings(obj.value("targetText").toString(), obj.value("sourceText").toString(), QPoint(obj.value("xposition").toInteger(), obj.value("yposition").toInteger()));
+            unitIndices.append(id);
+            continue;
+        }
+        TranslationUnitWidget* unit = unitFrame->getTranslationUnit(trueIndex);
+        unit->setTargetText(obj.value("targetText").toString());
+        unit->setSourceText(obj.value("sourceText").toString());
+        unit->move(obj.value("xposition").toInteger(), obj.value("yposition").toInteger());
+    }
 }
