@@ -3,19 +3,40 @@
 #include <QMenu>
 #include <QMouseEvent>
 
-TranslationUnitWidget::TranslationUnitWidget(QWidget *parent)
+TranslationUnitWidget::TranslationUnitWidget(const QString& target, const QString& source, QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::TranslationUnitWidget)
     , isBeingDragged(false)
     , draggingPosition()
 {
     ui->setupUi(this);
-    connect(ui->visibilityButton, &QPushButton::clicked, this, [this]{ this->ui->textLabel->setVisible(!this->ui->textLabel->isVisible()); });
+    ui->targetLabel->setText(target);
+    ui->sourceLabel->setText(source);
 }
 
 TranslationUnitWidget::~TranslationUnitWidget()
 {
     delete ui;
+}
+
+QString TranslationUnitWidget::getSourceText() const
+{
+    return ui->sourceLabel->text();
+}
+
+QString TranslationUnitWidget::getTargetText() const
+{
+    return ui->targetLabel->text();
+}
+
+void TranslationUnitWidget::setSourceText(const QString& source)
+{
+    ui->sourceLabel->setText(source);
+}
+
+void TranslationUnitWidget::setTargetText(const QString& target)
+{
+    ui->targetLabel->setText(target);
 }
 
 void TranslationUnitWidget::mousePressEvent(QMouseEvent *event)
@@ -27,7 +48,11 @@ void TranslationUnitWidget::mousePressEvent(QMouseEvent *event)
     }
     else if (event->button() == Qt::MiddleButton)
     {
-        attemptConnection(this);
+        emit attemptConnection(this);
+    }
+    else if (event->button() == Qt::RightButton)
+    {
+        emit attemptEdit(this);
     }
 }
 
@@ -37,7 +62,7 @@ void TranslationUnitWidget::mouseMoveEvent(QMouseEvent *event)
     {
         QPoint newPosition = mapToParent(event->pos() - draggingPosition);
         move(newPosition);
-        positionChanged(newPosition + QPoint(width() * 0.5, height() * 0.5));
+        emit positionChanged(newPosition + QPoint(width() * 0.5, height() * 0.5));
     }
 }
 

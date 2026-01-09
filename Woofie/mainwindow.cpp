@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
     , controller(nullptr)
 {
     ui->setupUi(this);
-    controller = new ApiController(ui->glossary->model());
+    controller = new ApiController(ui->glossary->model(), ui->frame);
 }
 
 MainWindow::~MainWindow()

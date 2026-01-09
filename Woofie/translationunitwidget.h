@@ -12,11 +12,18 @@ class TranslationUnitWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit TranslationUnitWidget(QWidget *parent = nullptr);
+    explicit TranslationUnitWidget(const QString& target, const QString& source, QWidget *parent = nullptr);
     ~TranslationUnitWidget();
+
+    QString getTargetText() const;
+    QString getSourceText() const;
+
+    void setTargetText(const QString& target);
+    void setSourceText(const QString& source);
 signals:
     void positionChanged(QPoint newPosition);
     void attemptConnection(TranslationUnitWidget* self);
+    void attemptEdit(TranslationUnitWidget* self);
 
 protected:
     void mousePressEvent(QMouseEvent *event);

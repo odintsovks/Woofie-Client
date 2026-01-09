@@ -21,10 +21,11 @@ QByteArray awaitReply(QNetworkReply* reply, int timeout = 10000)
     return reply->readAll();
 }
 
-ApiController::ApiController(GlossaryModel *glossaryModel, QObject *parent)
+ApiController::ApiController(GlossaryModel *glossaryModel, TranslationUnitFrame *unitFrame, QObject *parent)
     : QObject{parent}
     , manager()
     , glossaryIndices()
+    , unitIndices()
 {
     QUrl url("http://127.0.0.1:8080/glossary");
     QNetworkRequest request;
@@ -43,6 +44,23 @@ ApiController::ApiController(GlossaryModel *glossaryModel, QObject *parent)
     connect(glossaryModel, &GlossaryModel::termAddedByUser, this, &ApiController::glossaryTermAddedByUser);
     connect(glossaryModel, &GlossaryModel::termRemovedByUser, this, &ApiController::glossaryTermRemovedByUser);
     connect(glossaryModel, &GlossaryModel::dataChanged, this, &ApiController::glossaryDataUpdatedByUser);
+
+    url.setUrl("http://127.0.0.1:8080/api/translations");
+    request.setUrl(url);
+    result = awaitReply(manager.get(request));
+    jsonResult = QJsonDocument::fromJson(result);
+    entries = jsonResult.object().value("translations").toArray();
+
+    for (QJsonValue val : entries)
+    {
+        QJsonObject obj = val.toObject();
+        unitFrame->addTranslationUnitFromStrings(obj.value("targetText").toString(), obj.value("sourceText").toString());
+        unitIndices.append(obj.value("id").toInteger());
+    }
+
+    connect(unitFrame, &TranslationUnitFrame::addedTranslationUnitByUser, this, &ApiController::unitAddedByUser);
+    connect(unitFrame, &TranslationUnitFrame::removedTranslationUnitByUser, this, &ApiController::unitRemovedByUser);
+    connect(unitFrame, &TranslationUnitFrame::editedTranslationUnitByUser, this, &ApiController::unitUpdatedByUser);
 }
 
 void ApiController::glossaryDataUpdatedByUser(const QModelIndex& lhs, const QModelIndex& rhs)
@@ -77,9 +95,43 @@ void ApiController::glossaryTermAddedByUser(const GlossaryTerm& term)
 void ApiController::glossaryTermRemovedByUser(int index)
 {
     qint64 id = glossaryIndices[index];
-    qDebug() << id;
     glossaryIndices.removeAt(index);
     QUrl url("http://127.0.0.1:8080/glossary/" + QString::number(id));
+    QNetworkRequest request;
+    request.setUrl(url);
+    manager.deleteResource(request);
+}
+void ApiController::unitUpdatedByUser(int index, const TranslationUnitWidget* unit)
+{
+    QUrl url("http://127.0.0.1:8080/api/translations/" + QString::number(unitIndices[index]));
+    QNetworkRequest request;
+    request.setUrl(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    QJsonObject obj;
+    obj.insert("sourceText", unit->getSourceText());
+    obj.insert("targetText", unit->getTargetText());
+    manager.put(request, QJsonDocument(obj).toJson());
+}
+void ApiController::unitAddedByUser(const TranslationUnitWidget* unit)
+{
+    qsizetype newIndex = unitIndices.size();
+    unitIndices.append(-1);
+    QUrl url("http://127.0.0.1:8080/api/translations");
+    QNetworkRequest request;
+    request.setUrl(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    QJsonObject obj;
+    obj.insert("sourceText", unit->getSourceText());
+    obj.insert("targetText", unit->getTargetText());
+    QByteArray result = awaitReply(manager.post(request, QJsonDocument(obj).toJson()));
+    QJsonDocument jsonResult = QJsonDocument::fromJson(result);
+    unitIndices[newIndex] = jsonResult.object().value("id").toInteger();
+}
+void ApiController::unitRemovedByUser(int index)
+{
+    qint64 id = unitIndices[index];
+    unitIndices.removeAt(index);
+    QUrl url("http://127.0.0.1:8080/api/translations/" + QString::number(id));
     QNetworkRequest request;
     request.setUrl(url);
     manager.deleteResource(request);
