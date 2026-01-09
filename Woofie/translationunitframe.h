@@ -42,7 +42,7 @@ class TranslationUnitFrame : public QFrame
 public:
     explicit TranslationUnitFrame(QWidget *parent = nullptr);
     ~TranslationUnitFrame();
-    void addTranslationUnitFromStrings(const QString& target, const QString& source);
+    void addTranslationUnitFromStrings(const QString& target, const QString& source, const QPoint& pos = QPoint(0, 0));
 
 public slots:
     void editTranslationUnit(TranslationUnitWidget* widget);

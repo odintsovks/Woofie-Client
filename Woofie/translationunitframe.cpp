@@ -81,6 +81,7 @@ TranslationUnitFrame::TranslationUnitFrame(QWidget *parent)
     , addDialog(new AddUnitDialog(this))
 {
     ui->setupUi(this);
+    scene.setSceneRect(-1000, -1000, 2000, 2000);
     ui->graphicsView->setScene(&scene);
     connect(ui->graphicsView, &QWidget::customContextMenuRequested,
             this, [this](const QPoint &pos){
@@ -142,11 +143,12 @@ void TranslationUnitFrame::removeTranslationUnit(TranslationUnitWidget* widget)
     emit removedTranslationUnitByUser(index);
 }
 
-void TranslationUnitFrame::addTranslationUnitFromStrings(const QString& target, const QString& source)
+void TranslationUnitFrame::addTranslationUnitFromStrings(const QString& target, const QString& source, const QPoint& pos)
 {
     TranslationUnitWidget* unitPtr = new TranslationUnitWidget(target, source);
     units.push_back(unitPtr);
     connect(unitPtr, &TranslationUnitWidget::attemptConnection, this, &TranslationUnitFrame::attemptConnection);
+    connect(unitPtr, &TranslationUnitWidget::positionSet, this, [this](TranslationUnitWidget* unit){emit editedTranslationUnitByUser(units.indexOf(unit), unit);});
     QGraphicsProxyWidget* proxy = scene.addWidget(unitPtr);
     connect(unitPtr, &TranslationUnitWidget::attemptEdit,
             this, [this](TranslationUnitWidget* widget){
@@ -160,18 +162,18 @@ void TranslationUnitFrame::addTranslationUnitFromStrings(const QString& target, 
                 contextMenu.addAction(&action2);
                 contextMenu.exec(QCursor::pos());
             });
-    proxy->setPos(ui->graphicsView->mapToScene(QCursor::pos()));
+    proxy->setPos(pos.x(), pos.y());
 }
-
 
 void TranslationUnitFrame::addTranslationUnit()
 {
+    QPointF pos = ui->graphicsView->mapToScene(QCursor::pos());
     addDialog->clearFields();
     if (addDialog->exec() != QDialog::Accepted) {
         return;
     }
     QString target = addDialog->getTargetText();
     QString source = addDialog->getSourceText();
-    addTranslationUnitFromStrings(target, source);
+    addTranslationUnitFromStrings(target, source, QPoint(pos.x(), pos.y()));
     emit addedTranslationUnitByUser(units.back());
 }

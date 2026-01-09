@@ -70,6 +70,7 @@ void TranslationUnitWidget::mouseReleaseEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
     {
+        emit positionSet(this);
         isBeingDragged = false;
     }
 }

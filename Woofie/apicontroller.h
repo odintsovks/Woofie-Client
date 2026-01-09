@@ -22,6 +22,7 @@ private:
     QNetworkAccessManager manager;
     QList<qint64> glossaryIndices;
     QList<qint64> unitIndices;
+    QList<qint64> connectionIndices;
 };
 
 #endif // APICONTROLLER_H

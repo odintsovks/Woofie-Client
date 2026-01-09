@@ -54,7 +54,7 @@ ApiController::ApiController(GlossaryModel *glossaryModel, TranslationUnitFrame 
     for (QJsonValue val : entries)
     {
         QJsonObject obj = val.toObject();
-        unitFrame->addTranslationUnitFromStrings(obj.value("targetText").toString(), obj.value("sourceText").toString());
+        unitFrame->addTranslationUnitFromStrings(obj.value("targetText").toString(), obj.value("sourceText").toString(), QPoint(obj.value("xposition").toInteger(), obj.value("yposition").toInteger()));
         unitIndices.append(obj.value("id").toInteger());
     }
 
@@ -110,6 +110,8 @@ void ApiController::unitUpdatedByUser(int index, const TranslationUnitWidget* un
     QJsonObject obj;
     obj.insert("sourceText", unit->getSourceText());
     obj.insert("targetText", unit->getTargetText());
+    obj.insert("xposition", unit->x());
+    obj.insert("yposition", unit->y());
     manager.put(request, QJsonDocument(obj).toJson());
 }
 void ApiController::unitAddedByUser(const TranslationUnitWidget* unit)
@@ -123,6 +125,8 @@ void ApiController::unitAddedByUser(const TranslationUnitWidget* unit)
     QJsonObject obj;
     obj.insert("sourceText", unit->getSourceText());
     obj.insert("targetText", unit->getTargetText());
+    obj.insert("xposition", unit->x());
+    obj.insert("yposition", unit->y());
     QByteArray result = awaitReply(manager.post(request, QJsonDocument(obj).toJson()));
     QJsonDocument jsonResult = QJsonDocument::fromJson(result);
     unitIndices[newIndex] = jsonResult.object().value("id").toInteger();
